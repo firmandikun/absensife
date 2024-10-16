@@ -77,7 +77,8 @@ class _WebViewContainerState extends State<WebViewContainer> {
         child: Stack(
           children: [
             InAppWebView(
-              initialUrlRequest: URLRequest(url: WebUri('https://absensi-upy.developer-release.my.id/')),
+              initialUrlRequest: URLRequest(
+                  url: WebUri('https://absensi-upy.developer-release.my.id/')),
               onWebViewCreated: (InAppWebViewController controller) {
                 _controller = controller;
               },
@@ -94,18 +95,38 @@ class _WebViewContainerState extends State<WebViewContainer> {
                 // Inject JavaScript for location access
                 await _injectWebcamJSCheck();
               },
-              onLoadError: (controller, url, code, message) {
+              onLoadError: (controller, url, code, message) async {
                 setState(() {
                   _isLoading = false;
                   _errorMessage = 'Error: $message';
                 });
                 print('WebView error: $message');
+                await _controller.evaluateJavascript(source: '''
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+          console.log('Camera access granted');
+          // Lanjutkan dengan stream kamera
+        })
+        .catch(function(error) {
+          console.error('Could not access webcam: ' + error.message);
+          if (error.name === 'NotAllowedError') {
+            alert('Camera access is required to use this feature.');
+          }
+        });
+    ''');
               },
-              onGeolocationPermissionsShowPrompt: (InAppWebViewController controller, String origin) async {
+              onGeolocationPermissionsShowPrompt:
+                  (InAppWebViewController controller, String origin) async {
                 return GeolocationPermissionShowPromptResponse(
                   allow: true,
                   origin: origin,
                   retain: true,
+                );
+              },
+              onPermissionRequest: (controller, permissionRequest) async {
+                return PermissionResponse(
+                  resources: permissionRequest.resources,
+                  action: PermissionResponseAction.GRANT,
                 );
               },
             ),
