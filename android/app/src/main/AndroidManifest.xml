@@ -1,8 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:label="flutter_absensi"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <provider
+    android:name="com.pichillilorenzo.flutter_inappwebview_android.InAppWebViewFileProvider"
+    android:authorities="${applicationId}.flutter_inappwebview_android.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/provider_paths" />
+</provider>
         <activity
             android:name=".MainActivity"
             android:exported="true"
