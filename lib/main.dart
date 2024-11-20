@@ -147,9 +147,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
             },
             function(error) {
               console.error('Location access denied: ' + error.message);
-              if (error.code === error.PERMISSION_DENIED) {
-                alert('Location permission is required to use this feature. Please open settings and allow location access.');
-              }
+             
             }
           );
         } else {
